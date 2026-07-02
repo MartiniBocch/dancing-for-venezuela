@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carboot Sale Solidario - Items en Venta</title>
+    <style>
+        :root {
+            --primary: #0F2027;
+            --accent: #F2C94C;
+            --secondary: #EB5757;
+            --light: #F8F9FA;
+            --dark: #212529;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background-color: var(--light); color: var(--dark);
+        }
+        header {
+            background: linear-gradient(to right, #2C5364, #203A43, #0F2027);
+            color: white; padding: 40px 20px; text-align: center; position: relative;
+        }
+        .back-btn {
+            position: absolute; top: 20px; left: 20px; color: var(--accent); text-decoration: none; font-weight: bold;
+        }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        
+        /* Grid de Artículos */
+        .items-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 30px;
+        }
+        .item-card {
+            background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column;
+        }
+        .item-img { width: 100%; height: 200px; object-fit: cover; background-color: #ddd; }
+        .item-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .item-title { font-size: 1.2rem; margin: 0 0 10px 0; color: var(--primary); }
+        .item-desc { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+        .item-price { font-size: 1.3rem; font-weight: bold; color: var(--secondary); }
+
+        /* Formulario de añadir ítems */
+        .add-panel {
+            background: #fff; padding: 30px; border-radius: 12px; margin-top: 60px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid var(--secondary);
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn {
+            background-color: var(--secondary); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;
+        }
+        .btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-btn">← Volver Principal</a>
+        <h1>🚗 Carboot Sale Solidario</h1>
+        <p>Explora los objetos donados. El 100% de las ventas va destinado a mitigar la situación en Venezuela</p>
+    </header>
+
+    <div class="container">
+        <h2>📦 Catálogo de Artículos Disponibles</h2>
+        <div class="items-grid" id="catalog-container">
+            <div class="item-card">
+                <div class="item-img" style="display: flex; align-items: center; justify-content: center; color: #888;">[ Foto del Artículo ]</div>
+                <div class="item-body">
+                    <div>
+                        <h3 class="item-title">Libros de cocina e historias</h3>
+                        <p class="item-desc">Colección variada de libros en excelente estado para los amantes de la lectura.</p>
+                    </div>
+                    <div class="item-price">£3.00</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-panel">
+            <h3>➕ Añadir Nuevo Artículo al Inventario</h3>
+            <div class="form-group">
+                <label>Nombre del Artículo:</label>
+                <input type="text" id="item-name" placeholder="Ej. Chaqueta de invierno Vintage">
+            </div>
+            <div class="form-group">
+                <label>Descripción:</label>
+                <textarea id="item-description" rows="2" placeholder="Describe el estado o detalles del producto..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Precio (£):</label>
+                <input type="text" id="item-cost" placeholder="Ej. 5.00">
+            </div>
+            <div class="form-group">
+                <label>URL de la Imagen (Opcional):</label>
+                <input type="text" id="item-img-url" placeholder="Pega el enlace de la foto (o déjalo en blanco)">
+            </div>
+            <button class="btn" onclick="addItem()">Agregar al Catálogo</button>
+        </div>
+    </div>
+
+    <script>
+        // Array local para manejar los artículos añadidos dinámicamente
+        let items = JSON.parse(localStorage.getItem('carboot_items')) || [];
+
+        window.onload = function() {
+            renderItems();
+        }
+
+        function renderItems() {
+            const container = document.getElementById('catalog-container');
+            // Mantener el artículo base fijo y añadir los nuevos
+            container.innerHTML = `
+                <div class="item-card">
+                    <div class="item-img" style="display: flex; align-items: center; justify-content: center; color: #888; background:#eee;">📸 Foto próximamente</div>
+                    <div class="item-body">
+                        <div>
+                            <h3 class="item-title">Lote de Ropa Variada</h3>
+                            <p class="item-desc">Ropa donada en perfecto estado, tallas variadas M y L.</p>
+                        </div>
+                        <div class="item-price">£5.00</div>
+                    </div>
+                </div>
+            `;
+
+            items.forEach(item => {
+                let imgSrc = item.img ? item.img : 'https://via.placeholder.com/280x200?text=Articulo';
+                container.innerHTML += `
+                    <div class="item-card">
+                        <img src="${imgSrc}" class="item-img" alt="${item.name}">
+                        <div class="item-body">
+                            <div>
+                                <h3 class="item-title">${item.name}</h3>
+                                <p class="item-desc">${item.desc}</p>
+                            </div>
+                            <div class="item-price">£${item.cost}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addItem() {
+            let name = document.getElementById('item-name').value;
+            let desc = document.getElementById('item-description').value;
+            let cost = document.getElementById('item-cost').value;
+            let img = document.getElementById('item-img-url').value;
+
+            if(!name || !cost) {
+                alert("Por favor, rellena al menos el nombre y el precio.");
+                return;
+            }
+
+            let newItem = { name, desc, cost, img };
+            items.push(newItem);
+            localStorage.setItem('carboot_items', JSON.stringify(items));
+
+            renderItems();
+
+            // Limpiar formulario
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-description').value = '';
+            document.getElementById('item-cost').value = '';
+            document.getElementById('item-img-url').value = '';
+        }
+    </script>
+</body>
+</html>

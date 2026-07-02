@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clases de Salsa Benéficas - Dancing for Venezuela</title>
+    <style>
+        :root {
+            --primary: #0F2027;
+            --accent: #F2C94C;
+            --secondary: #EB5757;
+            --light: #F8F9FA;
+            --dark: #212529;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background-color: var(--light); color: var(--dark); line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(to right, #2C5364, #203A43, #0F2027);
+            color: white; padding: 40px 20px; text-align: center; position: relative;
+        }
+        .back-btn {
+            position: absolute; top: 20px; left: 20px; color: var(--accent); text-decoration: none; font-weight: bold;
+        }
+        .container {
+            max-width: 800px; margin: 40px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .info-block {
+            margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #eee;
+        }
+        h2 { color: var(--primary); }
+        .highlight { font-size: 1.2rem; font-weight: bold; color: var(--secondary); }
+        
+        /* Panel de Edición */
+        .admin-panel {
+            display: none; background: #f1f3f5; padding: 20px; border-radius: 8px; margin-top: 30px; border-left: 5px solid var(--accent);
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn {
+            background-color: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%;
+        }
+        .btn:hover { background-color: #1a3642; }
+        .admin-trigger {
+            text-align: center; margin-top: 40px; font-size: 0.9rem; color: #888; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-btn">← Volver Principal</a>
+        <h1>💃 Clases de Salsa Benéficas</h1>
+        <p>Aprende a bailar con ritmo y apoya activamente a Venezuela</p>
+    </header>
+
+    <div class="container">
+        <div class="info-block">
+            <h2>📍 Ubicación y Lugar</h2>
+            <p id="view-place" class="highlight">Próximamente por confirmar</p>
+        </div>
+
+        <div class="info-block">
+            <h2>⏰ Horarios y Fechas</h2>
+            <p id="view-time">Los horarios detallados se actualizarán aquí muy pronto.</p>
+        </div>
+
+        <div class="info-block">
+            <h2>📝 Detalles Adicionales</h2>
+            <p id="view-details">Clases aptas para todos los niveles, desde principiantes cero hasta intermedios. ¡Trae ropa cómoda y muchas ganas de disfrutar!</p>
+        </div>
+
+        <div class="admin-trigger" onclick="toggleAdmin()">🔒 Modo Administrador (Para Socios)</div>
+
+        <div id="admin-panel" class="admin-panel">
+            <h3>⚙️ Actualizar Información de la Clase</h3>
+            <div class="form-group">
+                <label>Lugar / Ubicación:</label>
+                <input type="text" id="edit-place">
+            </div>
+            <div class="form-group">
+                <label>Horarios y Fechas:</label>
+                <input type="text" id="edit-time">
+            </div>
+            <div class="form-group">
+                <label>Más información:</label>
+                <textarea id="edit-details" rows="4"></textarea>
+            </div>
+            <button class="btn" onclick="saveSalsaInfo()">Guardar Cambios Visuales</button>
+        </div>
+    </div>
+
+    <script>
+        // Cargar datos guardados localmente al abrir la página
+        window.onload = function() {
+            if(localStorage.getItem('salsa_place')) {
+                document.getElementById('view-place').innerText = localStorage.getItem('salsa_place');
+                document.getElementById('view-time').innerText = localStorage.getItem('salsa_time');
+                document.getElementById('view-details').innerText = localStorage.getItem('salsa_details');
+            }
+        }
+
+        function toggleAdmin() {
+            let pass = prompt("Introduce la contraseña de acceso (ej. salsa2026):");
+            if (pass === "salsa2026") { // Puedes cambiar esta contraseña fácil
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('edit-place').value = document.getElementById('view-place').innerText;
+                document.getElementById('edit-time').value = document.getElementById('view-time').innerText;
+                document.getElementById('edit-details').value = document.getElementById('view-details').innerText;
+            } else {
+                alert("Contraseña incorrecta");
+            }
+        }
+
+        function saveSalsaInfo() {
+            let p = document.getElementById('edit-place').value;
+            let t = document.getElementById('edit-time').value;
+            let d = document.getElementById('edit-details').value;
+
+            // Guardar en el navegador
+            localStorage.setItem('salsa_place', p);
+            localStorage.setItem('salsa_time', t);
+            localStorage.setItem('salsa_details', d);
+
+            // Actualizar vista al instante
+            document.getElementById('view-place').innerText = p;
+            document.getElementById('view-time').innerText = t;
+            document.getElementById('view-details').innerText = d;
+
+            alert("¡Cambios aplicados con éxito en la vista! Nota: Para que lo vea todo el mundo permanentemente, recuerda subir el archivo index/salsa modificado a GitHub.");
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
